@@ -1,5 +1,10 @@
+import Componentes.Consola;
+import Componentes.Universidad;
+
 public class Main {
     public static void main(String[] args) {
-        System.out.println("Hello world!");
+        Universidad universidad = new Universidad();
+        Consola consola = new Consola(universidad);
+
     }
 }
