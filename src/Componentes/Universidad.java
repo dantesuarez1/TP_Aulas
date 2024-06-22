@@ -86,6 +86,11 @@ public class Universidad {
 
     public void registraReserva() {
         Scanner scanner = new Scanner(System.in);
+
+        System.out.println("\nIngrese el ID del Aula: ");
+        int aula = scanner.nextInt();
+
+
         System.out.println("\nIngrese el tipo de reserva:");
         System.out.println("1. Asignatura.");
         System.out.println("2. Curso.");
