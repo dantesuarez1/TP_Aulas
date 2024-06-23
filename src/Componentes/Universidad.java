@@ -7,6 +7,9 @@ import java.lang.reflect.Type;
 import java.util.Map;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
 
 /**
  *  @author Dante Suarez
@@ -679,5 +682,27 @@ public class Universidad {
     for(CursoExtension curso : cursosDeExtension){
       curso.muestra();
     }
+  }
+
+  /**
+   * Generar presistencia de los objetos
+   */
+  public void persistencia() throws IOException {
+    FileOutputStream fos = new FileOutputStream("persistencia.txt");
+    ObjectOutputStream oos = new ObjectOutputStream(fos);
+
+    for(Aula aula : aulas){
+      oos.writeObject(aula);
+    }
+    for(Asignatura asignatura : asignaturas){
+      oos.writeObject(asignatura);
+    }
+    for(CursoExtension curso : cursosDeExtension){
+      oos.writeObject(curso);
+    }
+    for(Evento evento : eventos){
+      oos.writeObject(evento);
+    }
+    oos.close();
   }
 }

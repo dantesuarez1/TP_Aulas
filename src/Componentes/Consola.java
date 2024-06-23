@@ -63,6 +63,7 @@ public class Consola {
             break;
           case "6":
             System.out.println("Saliendo...");
+            universidad.persistencia();
             break;
           default:
             System.out.println("\nOpción no válida");

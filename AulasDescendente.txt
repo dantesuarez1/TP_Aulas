@@ -1,0 +1,6 @@
+
+101	1
+
+202	0
+
+Reservas promedio: 0.5
