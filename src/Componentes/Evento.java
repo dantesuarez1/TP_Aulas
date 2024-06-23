@@ -28,4 +28,15 @@ public class Evento {
     public double getCostoAlquiler() {
         return costoAlquiler;
     }
+
+    public void muestra(){
+        System.out.println("\nEvento");
+        System.out.println("Codigo: " + codigo);
+        System.out.println("Descripcion: " + descripcion);
+        System.out.println("Max Participantes: " + maxParticipantes);
+        System.out.println("EsExterno: " + esExterno);
+        System.out.println("Organizacion: " + organizacion);
+        System.out.println("Costo Alquiler: " + costoAlquiler);
+        System.out.println();
+    }
 }

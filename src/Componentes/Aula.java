@@ -34,7 +34,8 @@ public class Aula {
     reservas.add(reserva);
   }
 
-  void muestraAula() {
+  public void muestraAula() {
+    System.out.println();
     System.out.println("ID\tCapacidad Maxima");
     System.out.println(id + "\t" + capacidadMaxima);
     System.out.println("\nReservas:");
@@ -43,7 +44,7 @@ public class Aula {
     }
   }
 
-  void muestraAula(String codigoReserva) {
+  public void muestraAula(String codigoReserva) {
     for (Reserva r : reservas) {
       if (codigoReserva.equals(r.getCodigoReservador())) {
         System.out.println("\nID Aula: " + id);
@@ -53,17 +54,17 @@ public class Aula {
     }
   }
 
-  void cancelarReserva(int codReserva) {
+  public void cancelarReserva(String codReserva) {
     int i = 0;
     for (Reserva r : this.reservas) { // Busca la reserva
-      if (r.getCodigo() == codReserva) { // Elimina la reserva
+      if (r.getCodigoReservador().equals(codReserva)) { // Elimina la reserva
         System.out.println("\nReserva Eliminada\n");
         System.out.println("Datos:");
         r.mostrarReserva();
         reservas.remove(i);
         return;
       }
-      if (codReserva < r.getCodigo()) { // La reserva no existe
+      if (codReserva.compareTo(r.getCodigoReservador())>0) { // La reserva no existe
         System.out.println("\nNo se encontro el codigo de Reserva.");
         return;
       }

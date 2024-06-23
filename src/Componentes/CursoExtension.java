@@ -31,4 +31,15 @@ public class CursoExtension {
   public int getCantidadAlumnos() {
     return cantidadAlumnos;
   }
+
+  public void muestra(){
+    System.out.println("\nCurso de Extension");
+    System.out.println("Codigo: " + codigo);
+    System.out.println("Descripcion: " + descripcion);
+    System.out.println("Cantidad Alumnos: " + cantidadAlumnos);
+    System.out.println("Fecha: " + fecha);
+    System.out.println("Cantidad Clases: " + cantidadClases);
+    System.out.println("Costo Alumnos: " + costoAlumnos);
+    System.out.println();
+  }
 }

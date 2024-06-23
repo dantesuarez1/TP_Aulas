@@ -1,0 +1,58 @@
+{
+  "aulas": [
+    {
+      "numero": 101,
+      "capacidad": 30
+    },
+    {
+      "numero": 202,
+      "capacidad": 40
+    }
+  ],
+  "asignaturas": [
+    {
+      "codigo": "MAT101",
+      "nombre": "Matemáticas I",
+      "fechaInicio": "2024-03-01",
+      "fechaFin": "2024-07-01",
+      "diaDeLaSemana": "MONDAY",
+      "horaInicio": "08:00",
+      "horaFin": "10:00",
+      "inscriptos": 25
+    }
+  ],
+  "cursos": [
+    {
+      "codigo": "EXT101",
+      "descripcion": "Curso de Verano",
+      "fechaInicio": "2024-01-15",
+      "inscriptos": 20,
+      "cantidadClases": 10,
+      "costoPorAlumno": 150.0
+    }
+  ],
+  "eventos": [
+    {
+      "codigo": "EVT001",
+      "descripcion": "Conferencia de Tecnología",
+      "fecha": "2024-06-15",
+      "horaInicio": "09:00",
+      "horaFin": "17:00",
+      "maxParticipantes": 100,
+      "esExterno": true,
+      "organizacion": "Tech Corp",
+      "costoAlquiler": 500.0
+    }
+  ],
+  "reservas": [
+    {
+      "aulaNumero": 101,
+      "reserva": {
+        "fecha": "2024-06-20",
+        "horaInicio": "10:00",
+        "horaFin": "12:00",
+        "reservador": "Dr. Smith"
+      }
+    }
+  ]
+}

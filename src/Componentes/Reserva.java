@@ -39,7 +39,7 @@ public class Reserva {
 
   // Muestra todos los campos de la reserva
   void mostrarReserva() {
-    System.out.println("Codigo de Reserva: " + codigo);
+    System.out.println("Codigo de Reserva: " + codigo+1);
     System.out.println("Fecha: " + fecha);
     System.out.println("Hora Inicio: " + horaInicio);
     System.out.println("Hora Final " + horaFinal);

@@ -1,10 +1,12 @@
 package Componentes;
 
+import java.io.*;
 import java.time.*;
 import java.util.*;
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.lang.reflect.Type;
+import java.util.Map;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 
 public class Universidad {
@@ -61,8 +63,14 @@ public class Universidad {
    * // Método para cargar por Archivo
    */
 
+  //Listar todos las aulas
+  public void mostrarAulas(){
+    for (Aula aula : aulas){
+      System.out.println(aula.getId());
+    }
+  }
   // Listar los datos por piso
-  void listarDatos(int piso) {
+  public void listarDatos(int piso) {
     for (Aula a : this.aulas) {
       if ((a.getId() / 100) == piso) {
         a.muestraAula();
@@ -71,15 +79,15 @@ public class Universidad {
   }
 
   // Listar las reservas correspondientes al codigo ( asignatura / curso / evento
-  // )
-  void listarDatos(String codigoReserva) {
+  //
+  public void listarDatos(String codigoReserva) {
     for (Aula a : aulas) {      a.muestraAula(codigoReserva);
     }
   }
 
   // Metodo para cancelar una reserva con aula correspondiente y su codigo de
   // reserva
-  void cancelarReserva(int aulaID, int codReserva) {
+  public void cancelarReserva(int aulaID, String codReserva) {
     for (Aula a : this.aulas) {
       if (a.getId() == aulaID) { // Busca el aula
         a.cancelarReserva(codReserva); // Busca y elimina la reserva
@@ -94,14 +102,13 @@ public class Universidad {
   }
 
   // Registrar Reservas
-  public void registraReserva() {
-    Scanner scanner = new Scanner(System.in);
-
+  public void registraReserva(Scanner scanner) {
     System.out.println("\nIngrese el tipo de reserva:");
-    System.out.println("1. Asignatura.");
-    System.out.println("2. Curso.");
-    System.out.println("3. Evento.");
+    System.out.println("1. Asignatura");
+    System.out.println("2. Curso");
+    System.out.println("3. Evento");
     int opcion = scanner.nextInt();
+    scanner.nextLine();
     switch (opcion) {
       case 1: // Asignatura
         defineAsignatura(scanner);
@@ -115,7 +122,6 @@ public class Universidad {
       default:
         System.out.println("\nOpcion no valida.");
     }
-    scanner.close();
   }
 
   // Crear objeto y agregar a la lista
@@ -143,11 +149,12 @@ public class Universidad {
     System.out.println("Ingrese la hora de fin (HH:MM):");
     String finStr = scanner.next();
     LocalTime fin = LocalTime.parse(finStr);
+    scanner.nextLine();
 
     System.out.println("Ingrese el nombre de Asignatura:");
     nombre = scanner.nextLine();
 
-    System.out.println("Ingrese el codigo de la Asignatura (ABC123):");
+    System.out.println("Ingrese el codigo de la Asignatura (Alfanumerico):");
     codigo = scanner.nextLine();
 
     System.out.println("Ingrese la cantidad de alumnos:");
@@ -155,23 +162,28 @@ public class Universidad {
     scanner.nextLine();
 
     Aula aula = buscarAulaID(numeroAula);
-    if (cantAlum > aula.getCapacidadMaxima()) {
-      System.out.println("La cantidad de alumnos supera la capacidad maxima del aula.");
-      return;
-    }
-
-    LocalDate fecha = fechaInicio;
-
-    while (!fecha.isAfter(fechaFin)) {
-      if (!verificarDisponibilidadAula(numeroAula, fecha, inicio, fin)) {
-        System.out.println("El aula no esta disponible en el dia " + fecha);
+    if(aula != null) {
+      if (cantAlum > aula.getCapacidadMaxima()) {
+        System.out.println("La cantidad de alumnos supera la capacidad maxima del aula.");
         return;
       }
-      fecha = fecha.plusWeeks(1);
-    }
 
-    crearAsignatura(fechaInicio, fechaFin, inicio, fin, codigo, nombre, cantAlum, numeroAula);
-    System.out.println("\nLa asignatura y sus reservas fueron creadas correctamente.");
+      LocalDate fecha = fechaInicio;
+
+      while (!fecha.isAfter(fechaFin)) {
+        if (!verificarDisponibilidadAula(numeroAula, fecha, inicio, fin)) {
+          System.out.println("El aula no esta disponible en el dia " + fecha);
+          return;
+        }
+        fecha = fecha.plusWeeks(1);
+      }
+
+      crearAsignatura(fechaInicio, fechaFin, inicio, fin, codigo, nombre, cantAlum, numeroAula);
+      System.out.println("\nLa asignatura y sus reservas fueron creadas correctamente.");
+    }
+    else{
+      System.out.println("El aula no existe");
+    }
   }
 
   public void crearAsignatura(LocalDate fechaInicio, LocalDate fechaFin, LocalTime inicio,
@@ -186,6 +198,7 @@ public class Universidad {
     while (!fechaInicio.isAfter(fechaFin)) {
       Reserva reserva = new Reserva(aula.getCantidadReservas(), fechaInicio, inicio, fin, codigo);
       aula.addReserva(reserva);
+      fechaInicio = fechaInicio.plusWeeks(1);
     }
   }
 
@@ -203,13 +216,12 @@ public class Universidad {
     System.out.println("Ingrese la descripcion del Curso de Extension: ");
     descripcion = scanner.nextLine();
 
-    System.out.println("Ingrese el codigo del Curso de Extension: ");
+    System.out.println("Ingrese el codigo del Curso de Extension (Alfanumerico): ");
     codigo = scanner.nextLine();
 
     System.out.println("Ingrese la fecha (YYYY-MM-DD): ");    
     fechaStr = scanner.nextLine();
     fecha = LocalDate.parse(fechaStr);
-    scanner.nextLine();
 
     System.out.println("Ingrese la hora de inicio (HH:MM):");
     String inicioStr = scanner.next();
@@ -263,11 +275,11 @@ public class Universidad {
 
 
   public void defineEvento(Scanner scanner){
-    String descripcion, codigo, fechaStr, organizacion;
+    String descripcion, codigo, fechaStr, organizacion=null;
     LocalDate fecha;
     int maxParticipantes;
     boolean esExterno=false;
-    double costoAlquiler=0;
+    double costoAlquiler=0.0;
     
     System.out.println("Ingrese el número de aula:");
     int numeroAula = scanner.nextInt();
@@ -276,17 +288,12 @@ public class Universidad {
     System.out.println("Ingrese la descripcion del Evento: ");
     descripcion = scanner.nextLine();
 
-    System.out.println("Ingrese el codigo del Evento: ");
+    System.out.println("Ingrese el codigo del Evento (Alfanumerico): ");
     codigo = scanner.nextLine();
-
-    System.out.println("Ingrese el nombre de la organizacion: ");
-    organizacion = scanner.nextLine();
-
 
     System.out.println("Ingrese la fecha (YYYY-MM-DD): ");    
     fechaStr = scanner.nextLine();
     fecha = LocalDate.parse(fechaStr);
-    scanner.nextLine();
 
     System.out.println("Ingrese la hora de inicio (HH:MM):");
     String inicioStr = scanner.next();
@@ -295,6 +302,16 @@ public class Universidad {
     System.out.println("Ingrese la hora de fin (HH:MM):");
     String finStr = scanner.next();
     LocalTime fin = LocalTime.parse(finStr);
+
+    System.out.println("Ingrese la cantidad maxima de participantes: ");
+    maxParticipantes = scanner.nextInt();
+    scanner.nextLine();
+
+    Aula aula = buscarAulaID(numeroAula);
+    if (maxParticipantes > aula.getCapacidadMaxima()) {
+      System.out.println("La cantidad maxima de participantes supera la capacidad maxima del aula.");
+      return;
+    }
 
     int externo=0;
     while(externo!= 1 && externo !=2){
@@ -307,27 +324,24 @@ public class Universidad {
     if(externo==1){esExterno=true;}
 
 
-    System.out.println("Ingrese la cantidad maxima de participantes: ");
-    maxParticipantes = scanner.nextInt();
-    scanner.nextLine();
-
     if(esExterno){
-      System.out.println("Ingrese el Costo del Alquiler: ");
-      costoAlquiler= scanner.nextDouble();
-      scanner.nextLine();
+      System.out.println("Ingrese el Nombre de la Organización: ");
+      organizacion = scanner.nextLine();
+
+      try {
+        System.out.println("Ingrese el Costo del Alquiler: ");
+        costoAlquiler = scanner.nextDouble();
+        scanner.nextLine();
+      } catch (InputMismatchException e) {
+        System.out.println("Error: Ingreso inválido. Debe ingresar un número decimal.");
+      }
     }
+
 
     if(!verificarDisponibilidadAula(numeroAula, fecha, inicio, fin)){
       System.out.println("El aula no esta disponible en esa fecha.");
       return;
     }
-
-    Aula aula = buscarAulaID(numeroAula);
-    if (maxParticipantes > aula.getCapacidadMaxima()) {
-      System.out.println("La cantidad maxima de participantes supera la capacidad maxima del aula.");
-      return;
-    }
-
     crearEvento(codigo, descripcion, organizacion, maxParticipantes, esExterno, costoAlquiler, fecha, inicio, fin, numeroAula);
     System.out.println("\nEl evento se creo y su reserva se creo correctamente.");
   }
@@ -443,6 +457,15 @@ public class Universidad {
     }
 
   }
+  public void ordenarAulasPorCantidadReservasAsce(ArrayList<Aula> aulas){
+    Collections.sort(aulas, new Comparator<Aula>() {
+      @Override
+      public int compare(Aula a1, Aula a2) {
+        return Integer.compare(a1.getCantidadReservas(), a2.getCantidadReservas());
+      }
+    })
+    ;
+  }
 
   public void ordenarAulasPorCantidadReservasDesc(ArrayList<Aula> aulas) {
     Collections.sort(aulas, new Comparator<Aula>() {
@@ -454,4 +477,113 @@ public class Universidad {
     ;
   }
 
+
+  //
+  public void cargarDatosDesdeJson(String filePath, Scanner scanner) {
+    Gson gson = new Gson();
+    try (FileReader reader = new FileReader(filePath)) {
+      Type dataType = new TypeToken<Map<String, List<Map<String, Object>>>>() {}.getType();
+      Map<String, List<Map<String, Object>>> data = gson.fromJson(reader, dataType);
+
+      // Cargar aulas
+      List<Map<String, Object>> aulasData = data.get("aulas");
+      for (Map<String, Object> aulaData : aulasData) {
+        int numero = ((Double) aulaData.get("numero")).intValue();
+        int capacidad = ((Double) aulaData.get("capacidad")).intValue();
+        Aula aula = new Aula(numero, capacidad);
+        aulas.add(aula);
+      }
+
+      // Cargar asignaturas
+      List<Map<String, Object>> asignaturasData = data.get("asignaturas");
+      for (Map<String, Object> asignaturaData : asignaturasData) {
+        String codigo = (String) asignaturaData.get("codigo");
+        String nombre = (String) asignaturaData.get("nombre");
+        LocalDate fechaInicio = LocalDate.parse((String) asignaturaData.get("fechaInicio"));
+        LocalDate fechaFin = LocalDate.parse((String) asignaturaData.get("fechaFin"));
+        DayOfWeek diaDeLaSemana = DayOfWeek.valueOf((String) asignaturaData.get("diaDeLaSemana"));
+        LocalTime horaInicio = LocalTime.parse((String) asignaturaData.get("horaInicio"));
+        LocalTime horaFin = LocalTime.parse((String) asignaturaData.get("horaFin"));
+        int inscriptos = ((Double) asignaturaData.get("inscriptos")).intValue();
+        Asignatura asignatura = new Asignatura(codigo, nombre, fechaInicio, fechaFin, diaDeLaSemana, horaInicio, horaFin, inscriptos);
+        asignaturas.add(asignatura);
+      }
+
+      // Cargar cursos
+      List<Map<String, Object>> cursosData = data.get("cursos");
+      for (Map<String, Object> cursoData : cursosData) {
+        String codigo = (String) cursoData.get("codigo");
+        String descripcion = (String) cursoData.get("descripcion");
+        LocalDate fechaInicio = LocalDate.parse((String) cursoData.get("fechaInicio"));
+        int inscriptos = ((Double) cursoData.get("inscriptos")).intValue();
+        int cantidadClases = ((Double) cursoData.get("cantidadClases")).intValue();
+        double costoPorAlumno = (Double) cursoData.get("costoPorAlumno");
+        CursoExtension curso = new CursoExtension(codigo, descripcion, inscriptos, fechaInicio, cantidadClases, costoPorAlumno);
+        cursosDeExtension.add(curso);
+      }
+
+      // Cargar eventos
+      List<Map<String, Object>> eventosData = data.get("eventos");
+      for (Map<String, Object> eventoData : eventosData) {
+        String codigo = (String) eventoData.get("codigo");
+        String descripcion = (String) eventoData.get("descripcion");
+        LocalDate fecha = LocalDate.parse((String) eventoData.get("fecha"));
+        LocalTime horaInicio = LocalTime.parse((String) eventoData.get("horaInicio"));
+        LocalTime horaFin = LocalTime.parse((String) eventoData.get("horaFin"));
+        int maxParticipantes = ((Double) eventoData.get("maxParticipantes")).intValue();
+        boolean esExterno = (Boolean) eventoData.get("esExterno");
+        String organizacion = esExterno ? (String) eventoData.get("organizacion") : null;
+        double costoAlquiler = esExterno ? (Double) eventoData.get("costoAlquiler") : 0.0;
+        Evento evento = new Evento(codigo, descripcion, maxParticipantes, esExterno, organizacion,costoAlquiler);
+        eventos.add(evento);
+      }
+
+      // Cargar reservas
+      List<Map<String, Object>> reservasData = data.get("reservas");
+      for (Map<String, Object> reservaData : reservasData) {
+        int aulaNumero = ((Double) reservaData.get("aulaNumero")).intValue();
+        Map<String, Object> reservaInfo = (Map<String, Object>) reservaData.get("reserva");
+        LocalDate fecha = LocalDate.parse((String) reservaInfo.get("fecha"));
+        LocalTime horaInicio = LocalTime.parse((String) reservaInfo.get("horaInicio"));
+        LocalTime horaFin = LocalTime.parse((String) reservaInfo.get("horaFin"));
+        String reservador = (String) reservaInfo.get("reservador");
+
+        Aula aula = buscarAulaID(aulaNumero);
+        if (aula != null) {
+          Reserva reserva = new Reserva(aula.getCantidadReservas(),fecha, horaInicio, horaFin, reservador);
+          aula.addReserva(reserva);
+        }
+      }
+      ordenarAulasPorCantidadReservasAsce(aulas);
+      } catch (FileNotFoundException e) {
+        System.out.println("No se encontro el archivo JSON");
+        throw new RuntimeException(e);
+      } catch (IOException e) {
+          throw new RuntimeException(e);
+      }
+      System.out.println("El archivo de cargo correctamente.");
+
+      System.out.println("Desea comprobar datos? ");
+      System.out.println("1. Si");
+      System.out.println("2. No");
+      int opcion = scanner.nextInt();
+      scanner.nextLine();
+      if( opcion == 1)
+        compruebaDatos();
+    }
+
+    public void compruebaDatos(){
+      for(Aula aula : aulas){
+        aula.muestraAula();
+      }
+      for(Asignatura asignatura : asignaturas){
+        asignatura.muestra();
+      }
+      for(Evento evento : eventos){
+        evento.muestra();
+      }
+      for(CursoExtension curso : cursosDeExtension){
+        curso.muestra();
+      }
+    }
 }
