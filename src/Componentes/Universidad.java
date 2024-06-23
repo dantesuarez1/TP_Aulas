@@ -1,8 +1,11 @@
 package Componentes;
 
 import java.time.*;
-import java.util.Scanner;
-import java.util.ArrayList;
+import java.util.*;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
+
 
 public class Universidad {
   private ArrayList<Aula> aulas;
@@ -70,8 +73,7 @@ public class Universidad {
   // Listar las reservas correspondientes al codigo ( asignatura / curso / evento
   // )
   void listarDatos(String codigoReserva) {
-    for (Aula a : aulas) {
-      a.muestraAula(codigoReserva);
+    for (Aula a : aulas) {      a.muestraAula(codigoReserva);
     }
   }
 
@@ -182,7 +184,7 @@ public class Universidad {
 
     Aula aula = buscarAulaID(aulaid);
     while (!fechaInicio.isAfter(fechaFin)) {
-      Reserva reserva = new Reserva(aula.getLargoReservas(), fechaInicio, inicio, fin, codigo);
+      Reserva reserva = new Reserva(aula.getCantidadReservas(), fechaInicio, inicio, fin, codigo);
       aula.addReserva(reserva);
     }
   }
@@ -253,11 +255,12 @@ public class Universidad {
 
     Aula aula = buscarAulaID(aulaid);
     for(int i=0; i<cantidadClases; i++){
-      Reserva reserva = new Reserva(aula.getLargoReservas(), fecha, inicio, fin, codigo);
+      Reserva reserva = new Reserva(aula.getCantidadReservas(), fecha, inicio, fin, codigo);
       aula.addReserva(reserva);
       fecha=fecha.plusWeeks(1);
     }
   }
+
 
   public void defineEvento(Scanner scanner){
     String descripcion, codigo, fechaStr, organizacion;
@@ -326,16 +329,18 @@ public class Universidad {
     }
 
     crearEvento(codigo, descripcion, organizacion, maxParticipantes, esExterno, costoAlquiler, fecha, inicio, fin, numeroAula);
-
+    System.out.println("\nEl evento se creo y su reserva se creo correctamente.");
   }
+
   public void crearEvento(String codigo, String descripcion, String organicacion, int maxParticipantes, boolean esExterno, double costoAlquiler, LocalDate fecha, LocalTime inicio, LocalTime fin, int aulaid) {
     Evento evento = new Evento( codigo, descripcion, maxParticipantes, esExterno, organicacion, costoAlquiler);
 
     eventos.add(evento);
     Aula aula = buscarAulaID(aulaid);
-    Reserva reserva = new Reserva(aula.getLargoReservas(), fecha, inicio, fin, codigo);
+    Reserva reserva = new Reserva(aula.getCantidadReservas(), fecha, inicio, fin, codigo);
     aula.addReserva(reserva);
   }
+
 
   // Disponibilidad Aula
   public Aula buscarAulaID(int id) {
@@ -355,4 +360,98 @@ public class Universidad {
     }
     return aula.estaDisponible(fecha, inicio, fin);
   }
+
+
+  //Generar reportes
+
+  //Monto recaudado por aula, por piso y total de la institución. Tener en cuenta que las
+  //reservas de las asignaturas y eventos internos no generan ingresos.
+  public void recaudaciones() {
+      try {
+        //Crear archivo
+        BufferedWriter archivo = new BufferedWriter(new FileWriter("Recaudaciones.txt"));
+
+        //Iterator para poder utilizar while
+        Iterator<Aula> it = aulas.iterator();
+        if(it.hasNext()){
+          Aula aula = it.next();
+
+          //Acumuladores y contadores
+          int pisoActual=(aula.getId()/100);
+          double recaudacion;
+          double recaudacionesPiso;
+          double recaudacionesTotal=0;
+
+          //Primera linea
+          System.out.println("\nRecaudaciones: ");
+          archivo.write("Recaudaciones: \n");
+
+          while(it.hasNext()){ //Mientras no sea el ultimo
+            recaudacionesPiso=0;  //Inicializa el acumulador del piso actual
+            while(aula.getId()/100 == pisoActual){ // Mientras este en el mismo piso
+              recaudacion=aula.recaudacionesAula(eventos, cursosDeExtension);
+              System.out.println("Aula " + aula.getId() +  ": $" + recaudacion);
+              archivo.write("Aula " + aula.getId() +  ": $" + recaudacion + "\n");
+              recaudacionesPiso+=recaudacion;
+              aula = it.next(); //Siguiente aula
+            }
+            //Cambio de piso
+            System.out.println("\nRecaudacion del Piso " + pisoActual + ": $" + recaudacionesPiso);
+            archivo.write("Recaudacion del Piso " + pisoActual + ": $" + recaudacionesPiso + "\n");
+            recaudacionesTotal+=recaudacionesPiso;
+            pisoActual=(aula.getId()/100);
+          }
+          System.out.println("\nRecaudacion total: $" + recaudacionesTotal);
+          archivo.write("Recaudacion total: $" + recaudacionesTotal + "\n");
+        }else{
+          System.out.println("\nNo existen aulas");
+        }
+        archivo.close();
+      } catch (IOException ioe) {
+        System.out.println("No se pudo crear el archivo Recaudaciones");
+      }
+  }
+
+
+  //Listado completo de aulas ordenadas descendentemente por cantidad de reservas. Al
+  //final del listado, informar cantidad de reservas promedio por aula
+  public void resevasDescendente(){
+
+    try {
+      //Crear archivo
+      BufferedWriter archivo = new BufferedWriter(new FileWriter("AulasDescendente.txt"));
+
+      ArrayList<Aula> aux = aulas;
+      ordenarAulasPorCantidadReservasDesc(aux);
+      int cantAulas=0;
+      int reservasTotal=0;
+      int reservas;
+      System.out.println("Aula \tCant. Reservas" );
+      for(Aula aula : aux){
+        cantAulas++;
+        reservas=aula.getCantidadReservas();
+        reservasTotal+=reservas;
+        System.out.println("\n"+ aula.getId() + "\t" + reservas);
+        archivo.write("\n" + aula.getId() + "\t" + reservas + "\n");
+      }
+      float promedio = (float) reservasTotal / cantAulas;
+      System.out.println("\nReservas promedio: " + promedio);
+      archivo.write("\nReservas promedio: " + promedio + "\n");
+      archivo.close();
+    } catch (IOException ioe) {
+      System.out.println("No se pudo crear el archivo AulasDescendente");
+    }
+
+  }
+
+  public void ordenarAulasPorCantidadReservasDesc(ArrayList<Aula> aulas) {
+    Collections.sort(aulas, new Comparator<Aula>() {
+      @Override
+      public int compare(Aula a1, Aula a2) {
+        return Integer.compare(a2.getCantidadReservas(), a1.getCantidadReservas());
+      }
+    })
+    ;
+  }
+
 }

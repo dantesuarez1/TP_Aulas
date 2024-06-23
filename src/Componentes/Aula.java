@@ -26,7 +26,7 @@ public class Aula {
     return reservas;
   }
 
-  public int getLargoReservas() {
+  public int getCantidadReservas() {
     return reservas.size();
   }
 
@@ -91,4 +91,21 @@ public class Aula {
     return true; // Esta disponible
   }
 
+  public double recaudacionesAula(ArrayList<Evento> eventos, ArrayList<CursoExtension> cursos){
+    double recaudaciones = 0;
+    for(Reserva r : reservas){
+      String cod = r.getCodigoReservador();
+      for(Evento evento : eventos){
+        if( cod.equals(evento.getCodigo()) ) {
+          recaudaciones += evento.getCostoAlquiler();
+        }
+      }
+      for(CursoExtension curso : cursos){
+        if( cod.equals(curso.getCodigo())){
+          recaudaciones += ( curso.getCantidadAlumnos() * curso.getCostoAlumnos());
+        }
+      }
+    }
+    return recaudaciones;
+  }
 }

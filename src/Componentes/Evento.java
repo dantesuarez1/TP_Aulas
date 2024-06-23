@@ -16,4 +16,16 @@ public class Evento {
         this.organizacion = organizacion;
         this.costoAlquiler = costoAlquiler;
     }
+
+    public String getCodigo() {
+        return codigo;
+    }
+
+    public boolean getEsExterno() {
+        return esExterno;
+    }
+
+    public double getCostoAlquiler() {
+        return costoAlquiler;
+    }
 }

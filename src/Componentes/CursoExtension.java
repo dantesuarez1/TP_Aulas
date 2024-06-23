@@ -8,15 +8,27 @@ public class CursoExtension {
   private int cantidadAlumnos;
   private LocalDate fecha;
   private int cantidadClases; // Se dicta una por semana
-  private double costoPorAlumno;
+  private double costoAlumnos;
 
   public CursoExtension(String codigo, String descripcion, int cantAlumnos, LocalDate fecha, int cantClases,
-      double costoAlumno) {
+      double costoAlquiler) {
     this.codigo = codigo;
     this.descripcion = descripcion;
     cantidadAlumnos = cantAlumnos;
     this.fecha = fecha;
     cantidadClases = cantClases;
-    costoPorAlumno = costoAlumno;
+    this.costoAlumnos = costoAlquiler;
+  }
+
+  public String getCodigo() {
+    return codigo;
+  }
+
+  public double getCostoAlumnos() {
+    return costoAlumnos;
+  }
+
+  public int getCantidadAlumnos() {
+    return cantidadAlumnos;
   }
 }

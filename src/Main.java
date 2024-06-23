@@ -6,5 +6,6 @@ public class Main {
         Universidad universidad = new Universidad();
         Consola consola = new Consola(universidad);
 
+        consola.mostrarMenu();
     }
 }
