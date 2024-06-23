@@ -3,6 +3,11 @@ package Componentes;
 import java.util.Locale;
 import java.util.Scanner;
 
+/**
+ * @author Dante Suarez
+ * Consola para el manejo de menus
+ */
+
 public class Consola {
   private Universidad universidad;
 
@@ -10,6 +15,9 @@ public class Consola {
     this.universidad = universidad;
   }
 
+  /**
+   * Muestra el menu inicial por el cual se accede a las funciones
+   */
   public void mostrarMenu() {
     Scanner sc = new Scanner(System.in);
     sc.useLocale(Locale.US);
@@ -38,7 +46,7 @@ public class Consola {
             universidad.cancelarReserva(numeroAula, codigoReserva);
             break;
           case "3":
-            listarDatos();
+            listarDatos(sc);
             break;
           case "4":
             menuReportes(sc);
@@ -66,6 +74,10 @@ public class Consola {
     sc.close();
   }
 
+  /**
+   * Muestra el menu para generar Reportes
+   * @param scanner scanner para ingreso de datos
+   */
   public void menuReportes(Scanner scanner){
     System.out.println("\n\nGenerar Reportes");
     System.out.println("1. Reporte Recaudaciones");
@@ -84,8 +96,11 @@ public class Consola {
     }
   }
 
-  public void listarDatos(){
-    Scanner scanner = new Scanner(System.in);
+  /**
+   * Define de que manera se deben listar los datos y llama a la funcion correspondiente
+   * @param scanner scanner para ingreso de datos
+   */
+  public void listarDatos(Scanner scanner){
     System.out.println("Ingrese la opcion: ");
     System.out.println("1. Listar datos por Piso ");
     System.out.println("2. Listar datos por Reservante ");

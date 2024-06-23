@@ -2,6 +2,10 @@ package Componentes;
 
 import java.time.*;
 
+/**
+ * @author Dante Suarez
+ */
+
 public class Reserva {
   private int codigo; // Numérico único que se genera automáticamente de manera incremental
   private LocalDate fecha;
@@ -37,7 +41,9 @@ public class Reserva {
     return codigoReservador;
   }
 
-  // Muestra todos los campos de la reserva
+  /**
+   * Muestra todos los campos de la reserva
+   */
   void mostrarReserva() {
     System.out.println("Codigo de Reserva: " + codigo+1);
     System.out.println("Fecha: " + fecha);

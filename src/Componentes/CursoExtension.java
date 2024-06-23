@@ -2,6 +2,10 @@ package Componentes;
 
 import java.time.*;
 
+/**
+ * @author Dante Suarez
+ */
+
 public class CursoExtension {
   private String codigo;
   private String descripcion;
@@ -32,6 +36,9 @@ public class CursoExtension {
     return cantidadAlumnos;
   }
 
+  /**
+   * Muestra los campos del Curso de extension
+   */
   public void muestra(){
     System.out.println("\nCurso de Extension");
     System.out.println("Codigo: " + codigo);

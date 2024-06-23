@@ -3,6 +3,10 @@ package Componentes;
 import java.time.*;
 import java.util.ArrayList;
 
+/**
+ * @author Dante Suarez
+ */
+
 public class Aula {
   private int id; // centena indica el piso
   private int capacidadMaxima;
@@ -34,6 +38,9 @@ public class Aula {
     reservas.add(reserva);
   }
 
+  /**
+   * Muestra en consola todos los datos del aula, incluyendo sus reservas
+   */
   public void muestraAula() {
     System.out.println();
     System.out.println("ID\tCapacidad Maxima");
@@ -44,6 +51,10 @@ public class Aula {
     }
   }
 
+  /**
+   * Muestra todas las reservas del Reservante
+   * @param codigoReserva codigo del reservante
+   */
   public void muestraAula(String codigoReserva) {
     for (Reserva r : reservas) {
       if (codigoReserva.equals(r.getCodigoReservador())) {
@@ -54,6 +65,10 @@ public class Aula {
     }
   }
 
+  /**
+   * Cancela la reserva correspondiente al codigo Reservante
+   * @param codReserva codigo del reservante
+   */
   public void cancelarReserva(String codReserva) {
     int i = 0;
     for (Reserva r : this.reservas) { // Busca la reserva
@@ -73,6 +88,13 @@ public class Aula {
     System.out.println("\nNo se encontro el codigo de Reserva.");
   }
 
+  /**
+   * Comprueba si el aula esta disponible en la fecha y horario determinado
+   * @param fecha fecha en la cual se requiere el aula
+   * @param inicio hora de inicio en el cual se requiere el aula
+   * @param fin hora de finalizacion en la cual se requiere el aula
+   * @return true si esta disponible, false de caso contrario
+   */
   public boolean estaDisponible(LocalDate fecha, LocalTime inicio, LocalTime fin) {
     for (Reserva reserva : reservas) {
       if (reserva.getFecha().equals(fecha) && // Si el dia se superpone
@@ -92,6 +114,12 @@ public class Aula {
     return true; // Esta disponible
   }
 
+  /**
+   * Calcula la recaudacion total del aula
+   * @param eventos lista de los eventos
+   * @param cursos lista de los cursos
+   * @return recaudacion total del aula
+   */
   public double recaudacionesAula(ArrayList<Evento> eventos, ArrayList<CursoExtension> cursos){
     double recaudaciones = 0;
     for(Reserva r : reservas){

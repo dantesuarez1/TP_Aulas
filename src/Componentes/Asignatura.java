@@ -2,6 +2,10 @@ package Componentes;
 
 import java.time.*;
 
+/**
+ * @author Dante Suarez
+ */
+
 public class Asignatura {
   private String codigo;
   private String nombreAsignatura;
@@ -24,6 +28,9 @@ public class Asignatura {
     cantidadAlumnos = cantAlum;
   }
 
+  /**
+   * Muestra en consola todos los datos de la Asignatura
+   */
   public void muestra(){
     System.out.println("\nAsignatura ");
     System.out.println("Codigo del Asignatura " + codigo);
